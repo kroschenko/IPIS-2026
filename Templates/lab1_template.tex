@@ -1,0 +1,281 @@
+\documentclass[12pt, a4paper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs} % For professional tables
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings} % For PyTorch code snippets
+
+% ----- Colors -----
+\definecolor{primary}{RGB}{0, 82, 155}
+\definecolor{secondary}{RGB}{100, 100, 100}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% ----- Code Listing Setup -----
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ----- Hyperref Setup -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=primary,
+    citecolor=primary,
+}
+
+% ----- Section Formatting -----
+\sectionfont{\color{primary}\sffamily\Large}
+\subsectionfont{\color{primary}\sffamily\large}
+\subsubsectionfont{\color{primary}\sffamily\normalsize}
+
+% ----- Header & Footer -----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{secondary}{\small Image Processing in Intelligent Systems}}
+\fancyhead[R]{\textcolor{secondary}{\small Laboratory Work 1}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{secondary}\leaders\hrule height \headrulewidth\hfill}}
+
+% ----- Custom Boxes -----
+\tcbset{
+    colback=primary!5!white,
+    colframe=primary,
+    boxrule=1pt,
+    arc=4pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt
+}
+
+\begin{document}
+
+% ==============================================
+%                 TITLE PAGE
+% ==============================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries \textcolor{primary}{Laboratory Work No. 1} \par}
+    \vspace{0.5cm}
+    {\LARGE \textbf{Training Classifiers using PyTorch} \par}
+    \vspace{2cm}
+    
+    \begin{table}[h]
+        \centering
+        \large
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{l l}
+            Student Name: & [Your Name] \\
+            Group/ID: & [Your Group] \\
+            Course: & IPIS-2026 \\
+            Variant No.: & [e.g., 3] \\
+            Dataset: & [e.g., CIFAR-10] \\
+            Instructor: & Associate Prof. Aliaksandr Kroshchanka \\
+            Date: & \today \\
+        \end{tabular}
+    \end{table}
+    
+    \vfill
+    {\large \textbf{Brest State Technical University} \par}
+    {\large Department of Intelligent Information Systems \par}
+    \vspace*{2cm}
+\end{titlepage}
+
+% ==============================================
+%                 ABSTRACT
+% ==============================================
+\begin{abstract}
+    \noindent This report details the implementation and evaluation of a Convolutional Neural Network (CNN) built with the PyTorch framework. The primary objective is to construct a neural network classifier and train it on a standard computer vision dataset from \texttt{torchvision.datasets}. The report covers model architecture design, training optimization using a specific optimizer, evaluation of testing accuracy, and comparison with state-of-the-art results.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==============================================
+%                 MAIN CONTENT
+% ==============================================
+
+\section{Introduction and Objectives}
+
+\begin{tcolorbox}[title=Laboratory Goal]
+To learn how to construct neural network classifiers and perform their training on well-known computer vision datasets.
+\end{tcolorbox}
+
+The specific tasks to be completed in this laboratory work are:
+\begin{enumerate}
+    \item Construct a Convolutional Neural Network (CNN) model and train it on the assigned dataset. 
+    \item Evaluate the training efficiency on the test set and plot the error curve (loss) over epochs.
+    \item Review state-of-the-art results for the dataset and draw conclusions regarding the trained model's performance.
+    \item Implement a visualization module that takes an arbitrary image, feeds it to the architecture, and outputs the predicted class.
+\end{enumerate}
+
+\section{Variant Details}
+According to the assignment, the model is built and trained according to the parameters specified in Table \ref{tab:variant}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Task Assignment Configuration}
+    \label{tab:variant}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Parameter} & \textbf{Value} \\
+        \midrule
+        Variant Number & [Insert Variant, e.g., 3] \\
+        Dataset & [e.g., CIFAR-10] \\
+        Image Size & [e.g., 32x32] \\
+        Optimizer & [e.g., SGD] \\
+        Loss Function & \texttt{CrossEntropyLoss} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Model Architecture}
+Following the guidelines, preference was given to simple architectures utilizing basic layer types: convolutional layers, fully connected (linear) layers, subsampling (pooling) layers, and non-linear activation functions (e.g., ReLU).
+
+Below is a snippet of the implemented CNN using PyTorch:
+
+\begin{lstlisting}[language=Python, caption=PyTorch Model Definition]
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=10):
+        super(SimpleCNN, self).__init__()
+        # Convolutional layers
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
+        
+        # Fully connected layers
+        self.fc1 = nn.Linear(32 * 8 * 8, 128) # Adjust dimensions based on input size
+        self.fc2 = nn.Linear(128, num_classes)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = x.view(-1, 32 * 8 * 8) # Flatten the tensor
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+\end{lstlisting}
+
+\section{Training Process and Results}
+The model was trained using the \texttt{torchvision.datasets} module. The recommended \texttt{CrossEntropyLoss} criterion was applied to compute the gradient, and the weights were updated using the assigned optimizer.
+
+\subsection{Loss Curve}
+% Provide your matplotlib figure here
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{loss_plot.png}
+%     \caption{Training and validation loss over epochs.}
+%     \label{fig:loss}
+% \end{figure}
+Figure X (insert your matplotlib plot above) illustrates the reduction of training loss over time, confirming that the network successfully learned the underlying features of the dataset.
+
+\subsection{Evaluation}
+The final accuracy achieved on the test set was \textbf{XX.X\%}.
+
+\section{State-of-the-Art Comparison}
+Current state-of-the-art (SOTA) models for the assigned dataset (e.g., Vision Transformers or Deep ResNets) typically achieve accuracies upwards of 99\%. 
+The simple CNN implemented in this laboratory work achieved a lower accuracy, which is expected due to the shallow architecture, limited number of parameters, and the absence of advanced regularization or data augmentation techniques. However, the model successfully demonstrated the fundamental principles of deep learning.
+
+\section{Visualization of Model Inference}
+To verify the practical capability of the network, an arbitrary image was selected from the test set and passed through the model. 
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.4\textwidth]{prediction.png}
+%     \caption{Input image with the predicted class label outputted by the model.}
+%     \label{fig:prediction}
+% \end{figure}
+
+The model successfully extracted features and assigned the correct class label with high confidence, demonstrating an understanding of the visual representation.
+
+\section{Conclusion}
+In this laboratory work, a Convolutional Neural Network was successfully designed, implemented, and trained from scratch using PyTorch. The basic layers (convolutional, pooling, and fully connected) proved sufficient for learning fundamental features of the provided dataset. Future improvements could include the implementation of deeper networks, dropout layers, and hyperparameter tuning to bridge the gap toward state-of-the-art results. The full source code can be found in the attached GitHub repository.
+
+% ==============================================
+%                 REFERENCES
+% ==============================================
+\vspace{1cm}
+\begin{thebibliography}{9}
+    \bibitem{pytorch_docs} 
+    PyTorch Foundation. (2023). \textit{PyTorch Documentation}. Retrieved from \url{https://pytorch.org/docs/}
+    \bibitem{mnist_guide}
+    Koehler, G. \textit{Nextjournal PyTorch MNIST Guide}. Retrieved from \url{https://nextjournal.com/gkoehler/pytorch-mnist}
+\end{thebibliography}
+\newpage
+\appendix
+\section{Assignment Variants}
+Each student is assigned a specific dataset and optimizer based on their variant number. The configuration for all 20 variants is presented in Table \ref{tab:all_variants}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Complete List of Assignment Variants}
+    \label{tab:all_variants}
+    \renewcommand{\arraystretch}{1.2} % Слегка увеличиваем высоту строк для читаемости
+    \begin{tabular}{clll}
+        \toprule
+        \textbf{Variant No.} & \textbf{Dataset} & \textbf{Image Size} & \textbf{Optimizer} \\
+        \midrule
+        1 & MNIST & $28 \times 28$ & SGD \\
+        2 & Fashion-MNIST & $28 \times 28$ & SGD \\
+        3 & CIFAR-10 & $32 \times 32$ & SGD \\
+        4 & CIFAR-100 & $32 \times 32$ & SGD \\
+        5 & STL-10 (labeled) & $96 \times 96$ & SGD \\
+        \midrule
+        6 & MNIST & $28 \times 28$ & Adam \\
+        7 & Fashion-MNIST & $28 \times 28$ & Adam \\
+        8 & CIFAR-10 & $32 \times 32$ & Adam \\
+        9 & CIFAR-100 & $32 \times 32$ & Adam \\
+        10 & STL-10 (labeled) & $96 \times 96$ & Adam \\
+        \midrule
+        11 & MNIST & $28 \times 28$ & Adadelta \\
+        12 & Fashion-MNIST & $28 \times 28$ & Adadelta \\
+        13 & CIFAR-10 & $32 \times 32$ & Adadelta \\
+        14 & CIFAR-100 & $32 \times 32$ & Adadelta \\
+        15 & STL-10 (labeled) & $96 \times 96$ & Adadelta \\
+        \midrule
+        16 & MNIST & $28 \times 28$ & RMSprop \\
+        17 & Fashion-MNIST & $28 \times 28$ & RMSprop \\
+        18 & CIFAR-10 & $32 \times 32$ & RMSprop \\
+        19 & CIFAR-100 & $32 \times 32$ & RMSprop \\
+        20 & STL-10 (labeled) & $96 \times 96$ & RMSprop \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\end{document}

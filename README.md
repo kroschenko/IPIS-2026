@@ -1,8 +1,8 @@
-# Data Science: Machine Learning and Neural Networks
+# Image Processing in Intelligent Systems
 ## Laboratory Works Repository
 
-**Institution:** Brest State Technical University (BrSTU)  
-**Department:** Intellectual Information Technologies (IIT)  
+**Institution:** Brest State Technical University (BSTU)  
+**Department:** Intelligent Information Systems (IIT)  
 **Instructor:** Assoc. Prof. A. Kroshchanka, Ph.D.
 
 ---
@@ -15,7 +15,7 @@ This repository contains the laboratory assignments, source code, and report tem
 ```text
 📦 ML-Neural-Networks-Course
  ┣ 📂 Lab_01_PyTorch_Classification  # Image classification with CNNs (MNIST, CIFAR, etc.)
- ┣ 📂 Lab_02_...                     # Upcoming labs (14 sessions total)
+ ┣ 📂 Lab_02_...                     # Upcoming labs
  ┣ 📂 Templates                      # LaTeX templates for lab reports
  ┣ 📜 .gitignore
  ┣ 📜 requirements.txt

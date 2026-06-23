@@ -43,8 +43,8 @@ It is highly recommended to use a virtual environment (e.g., `venv` or `conda`) 
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/your-username/ML-Neural-Networks-Course.git
-cd ML-Neural-Networks-Course
+git clone https://github.com/kroschenko/IPIS-2026.git
+cd IPIS-2026
 ```
 
 **2. Create a virtual environment:**

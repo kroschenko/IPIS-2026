@@ -37,6 +37,18 @@ This repository contains the laboratory assignments, source code, and report tem
 
 ---
 
+### 🔬 Laboratory Work No. 2: Constructing Models Based on Pre-trained Neural Networks
+**Objective:** Train neural networks constructed on the basis of pre-trained architectures using transfer learning techniques.
+
+#### Tasks:
+1. **Model Adaptation:** Load a designated pre-trained network (AlexNet, ResNet, MobileNet, DenseNet, SqueezeNet, ShuffleNet) and modify its final layer structure to fit the target dataset.
+2. **Data Preprocessing:** Implement proper data transformation pipelines, including image resizing and converting single-channel images (MNIST, Fashion-MNIST) to 3-channel tensors to match the pre-trained model inputs.
+3. **Training & Performance Evaluation:** Train the adapted network using the same optimizer from Laboratory Work 1 and `CrossEntropyLoss`. Plot the error curves.
+4. **Comparative Analysis:** Compare the performance (accuracy, convergence speed) of the pre-trained model against the custom CNN architecture from Laboratory Work 1 and public SOTA benchmarks.
+5. **Inference Visualization:** Implement a module to run inference on arbitrary images from the Internet using both the custom and pre-trained networks, displaying the predicted classification results.
+
+---
+
 ### ⚙️ Installation & Setup
 
 It is highly recommended to use a virtual environment (e.g., `venv` or `conda`) to manage dependencies.

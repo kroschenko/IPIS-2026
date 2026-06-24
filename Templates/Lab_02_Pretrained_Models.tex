@@ -1,0 +1,288 @@
+\documentclass[12pt, a4paper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs} % For professional tables
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings} % For PyTorch code snippets
+
+% ----- Colors -----
+\definecolor{primary}{RGB}{0, 82, 155}
+\definecolor{secondary}{RGB}{100, 100, 100}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% ----- Code Listing Setup -----
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ----- Hyperref Setup -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=primary,
+    citecolor=primary,
+}
+
+% ----- Section Formatting -----
+\sectionfont{\color{primary}\sffamily\Large}
+\subsectionfont{\color{primary}\sffamily\large}
+\subsubsectionfont{\color{primary}\sffamily\normalsize}
+
+% ----- Header & Footer -----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{secondary}{\small Image Processing in Intelligent Systems}}
+\fancyhead[R]{\textcolor{secondary}{\small Laboratory Work 2}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{secondary}\leaders\hrule height \headrulewidth\hfill}}
+
+% ----- Custom Boxes -----
+\tcbset{
+    colback=primary!5!white,
+    colframe=primary,
+    boxrule=1pt,
+    arc=4pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt
+}
+
+\begin{document}
+
+% ==============================================
+%                 TITLE PAGE
+% ==============================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries \textcolor{primary}{Laboratory Work No. 2} \par}
+    \vspace{0.5cm}
+    {\LARGE \textbf{Constructing Models Based on Pre-trained Neural Networks} \par}
+    \vspace{2cm}
+    
+    \begin{table}[h]
+        \centering
+        \large
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{l l}
+            Student Name: & [Your Name] \\
+            Group/ID: & [Your Group] \\
+            Variant No.: & [e.g., 2] \\
+            Dataset: & [e.g., Fashion-MNIST] \\
+            Architecture: & [e.g., ResNet18] \\
+            Instructor: & Assoc. Prof. A. Kroshchanka \\
+            Date: & \today \\
+        \end{tabular}
+    \end{table}
+    
+    \vfill
+    {\large \textbf{Brest State Technical University} \par}
+    {\large Department of Intellectual Information Technologies \par}
+    \vspace*{2cm}
+\end{titlepage}
+
+% ==============================================
+%                 ABSTRACT
+% ==============================================
+\begin{abstract}
+    \noindent This report details the process of adapting and fine-tuning a pre-trained neural network using the PyTorch framework. The primary objective is to modify an existing architecture (e.g., ResNet, MobileNet) to fit a specific classification task and evaluate its performance. The report includes data preprocessing (such as handling single-channel images), architecture modification, performance comparison against custom models from Laboratory Work 1, state-of-the-art benchmarking, and model inference visualization on arbitrary images.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==============================================
+%                 MAIN CONTENT
+% ==============================================
+
+\section{Introduction and Objectives}
+
+\begin{tcolorbox}[title=Laboratory Goal]
+To train neural networks constructed on the basis of pre-trained architectures using transfer learning techniques.
+\end{tcolorbox}
+
+The specific tasks to be completed in this laboratory work are:
+\begin{enumerate}
+    \item Organize the training process of a pre-trained neural network by adapting its layer structure to the assigned dataset. Use the same optimizer from Laboratory Work 1.
+    \item Plot the training/validation loss curves and evaluate the test set efficiency.
+    \item Compare the obtained results with the custom CNN architecture developed in Laboratory Work 1.
+    \item Review state-of-the-art (SOTA) results for the dataset and draw conclusions.
+    \item Visualize the inference of both the pre-trained and the custom network by feeding them an arbitrary image (e.g., from the Internet) and displaying the classification output.
+\end{enumerate}
+
+\section{Variant Details}
+
+According to the assignment, the experiment is conducted using the configuration in Table \ref{tab:variant}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Assigned Configuration}
+    \label{tab:variant}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Parameter} & \textbf{Value} \\
+        \midrule
+        Variant Number & [Insert Variant, e.g., 2] \\
+        Dataset & [e.g., Fashion-MNIST] \\
+        Optimizer & [e.g., SGD] \\
+        Pre-trained Architecture & [e.g., ResNet18] \\
+        Loss Function & \texttt{CrossEntropyLoss} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Data Preprocessing}
+Pre-trained models in PyTorch typically expect input images to be 3-channel RGB tensors of a certain minimum size (often $224 \times 224$). For datasets containing small, single-channel images (like MNIST or Fashion-MNIST), data transformation is required. 
+
+The \texttt{torchvision.transforms} module was utilized to resize the images and convert grayscale inputs to 3-channel tensors by duplicating the channel:
+
+\begin{lstlisting}[language=Python, caption=Data Transformation Pipeline]
+import torchvision.transforms as transforms
+
+# Transformation for 1-channel datasets (e.g., MNIST) to fit a 3-channel model
+data_transform = transforms.Compose([
+    transforms.Resize(224), # Resize to match the pre-trained model input
+    transforms.Grayscale(num_output_channels=3), # Convert 1-channel to 3-channels
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], # ImageNet statistics
+                         std=[0.229, 0.224, 0.225])
+])
+\end{lstlisting}
+
+\section{Model Adaptation}
+The assigned pre-trained architecture was loaded using the \texttt{torchvision.models} module. To adapt the model for the new dataset, the final fully connected layer (classifier) was replaced to match the number of target classes (e.g., 10 classes).
+
+\begin{lstlisting}[language=Python, caption=Adapting a Pre-trained ResNet18]
+import torchvision.models as models
+import torch.nn as nn
+
+# Load pre-trained ResNet18
+model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+
+# Modify the final fully connected layer
+num_ftrs = model.fc.in_features
+# Replace with a new linear layer (e.g., 10 output classes)
+model.fc = nn.Linear(num_ftrs, 10) 
+\end{lstlisting}
+
+\section{Training and Results}
+The adapted network was trained using the \texttt{CrossEntropyLoss} criterion and the designated optimizer. 
+
+\subsection{Loss Curve}
+% Provide your matplotlib figure here
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{loss_plot_lab2.png}
+%     \caption{Training loss curve for the pre-trained model.}
+%     \label{fig:loss}
+% \end{figure}
+
+The graph demonstrates the convergence of the pre-trained model. Transfer learning allowed the model to reach a lower loss significantly faster than training from scratch.
+
+\subsection{Evaluation and Comparisons}
+
+\subsubsection{Pre-trained vs. Custom Architecture (Lab 1)}
+The modified pre-trained architecture achieved an accuracy of \textbf{XX.X\%} on the test set, compared to \textbf{YY.Y\%} achieved by the custom CNN from Laboratory Work 1. The pre-trained model demonstrated superior feature extraction capabilities due to weights initialized from a large-scale dataset (ImageNet).
+
+\subsubsection{Comparison with SOTA}
+While the pre-trained model achieves highly competitive results, absolute SOTA models on this dataset utilize complex training regimes, extensive data augmentation, and modern architectures (such as Vision Transformers). However, the transfer learning approach provided near-SOTA performance with a fraction of the computational cost.
+
+\section{Inference Visualization}
+An arbitrary image was sourced from the Internet to test the robustness of both models. The image was preprocessed, transformed into a tensor, and fed into both the Lab 1 custom CNN and the Lab 2 pre-trained model.
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{inference_comparison.png}
+%     \caption{Inference results: Custom CNN vs Pre-trained Model.}
+%     \label{fig:inference}
+% \end{figure}
+
+The pre-trained model outputted the correct classification with a high confidence score, demonstrating excellent generalization capabilities on unseen, real-world data.
+
+\section{Conclusion}
+This laboratory work successfully demonstrated the process of utilizing transfer learning by adapting a pre-trained neural network. Modifying the layer structure and applying proper data transformations allowed the model to effectively classify the target dataset. The comparison highlighted the significant advantages of pre-trained models over simple custom architectures in terms of accuracy and convergence speed.
+
+% ==============================================
+%                 REFERENCES
+% ==============================================
+\vspace{1cm}
+\begin{thebibliography}{9}
+    \bibitem{pytorch_models} 
+    PyTorch Documentation. \textit{Models and pre-trained weights}. Retrieved from \url{https://pytorch.org/vision/stable/models.html}
+\end{thebibliography}
+
+\newpage
+\appendix
+\section{Assignment Variants}
+Each student is assigned a specific dataset, optimizer, and pre-trained architecture based on their variant number. The configuration for all 20 variants is presented in Table \ref{tab:all_variants_lab2}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Complete List of Assignment Variants for Laboratory Work 2}
+    \label{tab:all_variants_lab2}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{clll}
+        \toprule
+        \textbf{Variant No.} & \textbf{Dataset} & \textbf{Optimizer} & \textbf{Pre-trained Architecture} \\
+        \midrule
+        1 & MNIST & SGD & AlexNet \\
+        2 & Fashion-MNIST & SGD & ResNet18 \\
+        3 & CIFAR-10 & SGD & ResNet34 \\
+        4 & CIFAR-100 & SGD & MobileNet v3 \\
+        5 & STL-10 (labeled) & SGD & DenseNet121 \\
+        \midrule
+        6 & MNIST & Adam & ResNet18 \\
+        7 & Fashion-MNIST & Adam & ResNet34 \\
+        8 & CIFAR-10 & Adam & MobileNet v3 \\
+        9 & CIFAR-100 & Adam & DenseNet121 \\
+        10 & STL-10 (labeled) & Adam & SqueezeNet 1.1 \\
+        \midrule
+        11 & MNIST & Adadelta & ResNet34 \\
+        12 & Fashion-MNIST & Adadelta & MobileNet v3 \\
+        13 & CIFAR-10 & Adadelta & DenseNet121 \\
+        14 & CIFAR-100 & Adadelta & SqueezeNet 1.1 \\
+        15 & STL-10 (labeled) & Adadelta & MobileNet v2 \\
+        \midrule
+        16 & MNIST & RMSprop & MobileNet v3 \\
+        17 & Fashion-MNIST & RMSprop & DenseNet121 \\
+        18 & CIFAR-10 & RMSprop & SqueezeNet 1.1 \\
+        19 & CIFAR-100 & RMSprop & MobileNet v2 \\
+        20 & STL-10 (labeled) & RMSprop & ShuffleNet v2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\end{document}

@@ -1,0 +1,314 @@
+\documentclass[12pt, a4paper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs} % For professional tables
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings} % For Python code snippets
+
+% ----- Colors -----
+\definecolor{primary}{RGB}{0, 82, 155}
+\definecolor{secondary}{RGB}{100, 100, 100}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% ----- Code Listing Setup -----
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ----- Hyperref Setup -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=primary,
+    citecolor=primary,
+}
+
+% ----- Section Formatting -----
+\sectionfont{\color{primary}\sffamily\Large}
+\subsectionfont{\color{primary}\sffamily\large}
+\subsubsectionfont{\color{primary}\sffamily\normalsize}
+
+% ----- Header & Footer -----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{secondary}{\small Image Processing in Intelligent Systems}}
+\fancyhead[R]{\textcolor{secondary}{\small Laboratory Work 3}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{secondary}\leaders\hrule height \headrulewidth\hfill}}
+
+% ----- Custom Boxes -----
+\tcbset{
+    colback=primary!5!white,
+    colframe=primary,
+    boxrule=1pt,
+    arc=4pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt
+}
+
+\begin{document}
+
+% ==============================================
+%                 TITLE PAGE
+% ==============================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries \textcolor{primary}{Laboratory Work No. 3} \par}
+    \vspace{0.5cm}
+    {\LARGE \textbf{Training Object Detectors} \par}
+    \vspace{2cm}
+    
+    \begin{table}[h]
+        \centering
+        \large
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{l l}
+            Student Name: & [Your Name] \\
+            Group/ID: & [Your Group] \\
+            Variant No.: & [e.g., 1] \\
+            Dataset: & [e.g., People Detection] \\
+            Detector: & [e.g., YOLO11n] \\
+            Instructor: & Assoc. Prof. A. Kroshchanka \\
+            Date: & \today \\
+        \end{tabular}
+    \end{table}
+    
+    \vfill
+    {\large \textbf{Brest State Technical University} \par}
+    {\large Department of Intellectual Information Technologies \par}
+    \vspace*{2cm}
+\end{titlepage}
+
+% ==============================================
+%                 ABSTRACT
+% ==============================================
+\begin{abstract}
+    \noindent This report details the process of training a neural network object detector using the YOLO (You Only Look Once) architecture. The objective is to configure a custom dataset, organize the training pipeline for a specific YOLO variant, and evaluate the model's performance using standard metrics such as mean Average Precision (mAP). Finally, the trained detector is tested on arbitrary images sourced from the Internet to visualize its real-world inference capabilities.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==============================================
+%                 MAIN CONTENT
+% ==============================================
+
+\section{Introduction and Objectives}
+
+\begin{tcolorbox}[title=Laboratory Goal]
+To perform the training of a neural network detector for solving the task of detecting specified objects.
+\end{tcolorbox}
+
+The specific tasks to be completed in this laboratory work are:
+\begin{enumerate}
+    \item Explore the assigned dataset, performing any necessary data transformations to organize the training process.
+    \item Organize the training process for the assigned neural network detector architecture on the specified dataset.
+    \item Evaluate the training efficiency on the test set using the mean Average Precision (mAP) metric.
+    \item Implement visualization of the detector's operation by detecting objects on individual photographs retrieved from the Internet.
+\end{enumerate}
+
+\section{Variant Details}
+According to the assignment, the experiment is conducted using the configuration presented in Table \ref{tab:variant}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Assigned Configuration}
+    \label{tab:variant}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Parameter} & \textbf{Value} \\
+        \midrule
+        Variant Number & [Insert Variant, e.g., 1] \\
+        Dataset Topic & [e.g., People] \\
+        Dataset Source & \url{[Insert Roboflow URL]} \\
+        Detector Architecture & [e.g., YOLO11n] \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Data Preparation}
+The dataset was obtained from Roboflow and exported in the YOLO format. The dataset structure includes \texttt{images} and \texttt{labels} directories for training, validation, and testing splits, along with a \texttt{data.yaml} file that defines the number of classes and their corresponding paths.
+
+\begin{lstlisting}[language=Python, caption=Dataset Configuration (data.yaml example)]
+# Example of data.yaml structure
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1 # number of classes
+names: ['person'] # class names
+\end{lstlisting}
+
+\section{Model Training}
+The training process was organized using the \texttt{ultralytics} Python package. The assigned YOLO model architecture was initialized with pre-trained weights to speed up convergence (transfer learning).
+
+\begin{lstlisting}[language=Python, caption=YOLO Training Pipeline]
+from ultralytics import YOLO
+
+# Load the assigned YOLO model (e.g., YOLO11n)
+model = YOLO('yolo11n.pt') 
+
+# Train the model on the custom dataset
+results = model.train(
+    data='path/to/data.yaml', 
+    epochs=50, 
+    imgsz=640,
+    batch=16,
+    name='custom_detector'
+)
+\end{lstlisting}
+
+\section{Evaluation Results}
+After training, the model's performance was evaluated on the test set. The primary metric for object detection is the mean Average Precision (mAP).
+
+\begin{table}[htpb]
+    \centering
+    \caption{Evaluation Metrics on Test Set}
+    \label{tab:metrics}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP@50} \\
+        \midrule
+        All & 0.XX & 0.XX & 0.XX \\
+        % Add specific classes if applicable
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{results.png}
+%     \caption{Training and validation metrics (loss, precision, recall, mAP).}
+%     \label{fig:results}
+% \end{figure}
+
+The obtained mAP score indicates that the model successfully learned to identify and localize the target objects with a high degree of accuracy.
+
+\section{Inference Visualization}
+To verify the detector's practical application, arbitrary photographs related to the dataset topic were retrieved from the Internet. The trained model was used to predict bounding boxes and class probabilities.
+
+\begin{lstlisting}[language=Python, caption=Model Inference]
+# Load the fine-tuned custom model
+best_model = YOLO('runs/detect/custom_detector/weights/best.pt')
+
+# Perform inference on an image from the Internet
+results = best_model.predict('https://example.com/test_image.jpg', save=True, conf=0.5)
+\end{lstlisting}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{inference_result.jpg}
+%     \caption{Detection results on a real-world image.}
+%     \label{fig:inference}
+% \end{figure}
+
+As seen in Figure X, the detector successfully placed bounding boxes around the target objects, correctly applying the learned features to unseen data.
+
+\section{Conclusion}
+In this laboratory work, an object detector based on the YOLO architecture was successfully trained. The pipeline included data acquisition and formatting, model fine-tuning, and evaluation using standard object detection metrics (mAP). The final trained model demonstrated robust capability in identifying and localizing specific objects in real-world images.
+
+% ==============================================
+%                 REFERENCES
+% ==============================================
+\vspace{1cm}
+\begin{thebibliography}{9}
+    \bibitem{ultralytics} 
+    Ultralytics. (2024). \textit{YOLO Docs}. Retrieved from \url{https://docs.ultralytics.com/models/}
+    \bibitem{roboflow}
+    Roboflow Universe. (2024). \textit{Computer Vision Datasets}. Retrieved from \url{https://universe.roboflow.com/}
+\end{thebibliography}
+
+\newpage
+\appendix
+\section{Assignment Variants}
+Table \ref{tab:all_variants_lab3} lists all configurations for this laboratory work.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Variants for Laboratory Work 3}
+    \label{tab:all_variants_lab3}
+    \renewcommand{\arraystretch}{1.2}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{cll}
+        \toprule
+        \textbf{Variant} & \textbf{Detector} & \textbf{Dataset (Roboflow)} \\
+        \midrule
+        1 & YOLO11n & People \\
+        2 & YOLO11n & License Plates \\
+        3 & YOLO11s & Vehicles \\
+        4 & YOLO11s & Cats \\
+        5 & YOLO11m & Water Meters \\
+        6 & YOLO11m & Rock-Paper-Scissors \\
+        \midrule
+        7 & YOLO12n & People \\
+        8 & YOLO12n & License Plates \\
+        9 & YOLO12s & Vehicles \\
+        10 & YOLO12s & Cats \\
+        11 & YOLO12m & Water Meters \\
+        12 & YOLO12m & Rock-Paper-Scissors \\
+        \midrule
+        13 & YOLO26n & People \\
+        14 & YOLO26n & License Plates \\
+        15 & YOLO26s & Vehicles \\
+        16 & YOLO26s & Cats \\
+        17 & YOLO26m & Water Meters \\
+        18 & YOLO26m & Rock-Paper-Scissors \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+\textbf{People:} \\
+\url{https://universe.roboflow.com/leo-ueno/people-detection-o4rdr/dataset/10}
+
+\textbf{License Plates:} \\
+\url{https://universe.roboflow.com/roboflow-universe-projects/license-plate-recognition-rxg4e/dataset/11}
+
+\textbf{Vehicles:} \\
+\url{https://universe.roboflow.com/roboflow-100/vehicles-q0x2v/dataset/2}
+
+\textbf{Cats:} \\
+\url{https://universe.roboflow.com/mohamed-traore-2ekkp/cats-n9b87/dataset/3}
+
+\textbf{Water Meters:} \\
+\url{https://universe.roboflow.com/koer3741-gmail-com/watermeteramrv2/dataset/1}
+
+\textbf{Rock-Paper-Scissors:} \\
+\url{https://universe.roboflow.com/roboflow-58fyf/rock-paper-scissors-sxsw}
+
+\end{document}

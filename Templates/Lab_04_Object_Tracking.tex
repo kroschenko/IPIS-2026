@@ -1,0 +1,227 @@
+\documentclass[12pt, a4paper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs} % For professional tables
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings} % For Python code snippets
+
+% ----- Colors -----
+\definecolor{primary}{RGB}{0, 82, 155}
+\definecolor{secondary}{RGB}{100, 100, 100}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% ----- Code Listing Setup -----
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ----- Hyperref Setup -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=primary,
+    citecolor=primary,
+}
+
+% ----- Section Formatting -----
+\sectionfont{\color{primary}\sffamily\Large}
+\subsectionfont{\color{primary}\sffamily\large}
+\subsubsectionfont{\color{primary}\sffamily\normalsize}
+
+% ----- Header & Footer -----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{secondary}{\small Image Processing in Intelligent Systems}}
+\fancyhead[R]{\textcolor{secondary}{\small Laboratory Work 4}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{secondary}\leaders\hrule height \headrulewidth\hfill}}
+
+% ----- Custom Boxes -----
+\tcbset{
+    colback=primary!5!white,
+    colframe=primary,
+    boxrule=1pt,
+    arc=4pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt
+}
+
+\begin{document}
+
+% ==============================================
+%                 TITLE PAGE
+% ==============================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries \textcolor{primary}{Laboratory Work No. 4} \par}
+    \vspace{0.5cm}
+    {\LARGE \textbf{Multiple Object Tracking} \par}
+    \vspace{2cm}
+    
+    \begin{table}[h]
+        \centering
+        \large
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{l l}
+            Student Name: & [Your Name] \\
+            Group/ID: & [Your Group] \\
+            Detector Used: & [e.g., YOLO11n from Lab 3] \\
+            Trackers: & BoT-SORT, ByteTrack \\
+            Instructor: & Assoc. Prof. A. Kroshchanka \\
+            Date: & \today \\
+        \end{tabular}
+    \end{table}
+    
+    \vfill
+    {\large \textbf{Brest State Technical University} \par}
+    {\large Department of Intellectual Information Technologies \par}
+    \vspace*{2cm}
+\end{titlepage}
+
+% ==============================================
+%                 ABSTRACT
+% ==============================================
+\begin{abstract}
+    \noindent This report explores the application of multiple object tracking algorithms using a custom-trained object detector. Using the Ultralytics YOLO framework, tracking algorithms such as BoT-SORT and ByteTrack are implemented and applied to video sequences. The study investigates how modifying parameters within tracking configuration files affects track stability and identifier (ID) consistency. Tracking logic is evaluated using real-world videos sourced from the Internet that contain the objects classified during the previous laboratory work.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==============================================
+%                 MAIN CONTENT
+% ==============================================
+
+\section{Introduction and Objectives}
+
+\begin{tcolorbox}[title=Laboratory Goal]
+To investigate the application of tracking algorithms based on a trained object detector network.
+\end{tcolorbox}
+
+The specific tasks to be completed in this laboratory work are:
+\begin{enumerate}
+    \item Implement logic for tracking multiple objects using the Ultralytics YOLO library, based on the detector trained in Laboratory Work 3.
+    \item Apply BoT-SORT and ByteTrack algorithms using their respective configuration files.
+    \item Investigate the changes in parameters within the configuration files and their impact on tracking quality.
+    \item Utilize video materials from the Internet (e.g., YouTube) containing multiple instances of the classes from Lab 3 as source data for the experiments.
+    \item Format the report and upload the source code and report to the corresponding GitHub repository.
+\end{enumerate}
+
+\section{Methodology}
+
+\subsection{Tracker Algorithms Overview}
+Multiple Object Tracking (MOT) extends standard object detection by assigning a persistent unique identifier (ID) to each detected object across consecutive video frames. In this laboratory work, two distinct tracking algorithms integrated into the Ultralytics framework are evaluated:
+\begin{itemize}
+    \item \textbf{BoT-SORT}: A robust tracker that balances bounding box geometry with appearance features to maintain track identities even during occlusions.
+    \item \textbf{ByteTrack}: An efficient tracking algorithm that leverages both high and low-confidence detection boxes to reduce false negatives and maintain trajectory consistency.
+\end{itemize}
+
+\subsection{Implementation}
+The tracking logic utilizes the custom weights (\texttt{best.pt}) generated in Lab 3. The `track` mode in Ultralytics YOLO allows direct tracking on video streams or URLs (such as YouTube videos).
+
+\begin{lstlisting}[language=Python, caption=Basic Tracking Implementation with Ultralytics]
+from ultralytics import YOLO
+
+# Load the custom model from Lab 3
+model = YOLO('path/to/Lab3/runs/detect/train/weights/best.pt')
+
+# Source video (e.g., YouTube link or local video file)
+video_source = "https://www.youtube.com/watch?v=example"
+
+# Run tracking using ByteTrack
+results_byte = model.track(source=video_source, tracker="bytetrack.yaml", show=True, save=True)
+
+# Run tracking using BoT-SORT
+results_bot = model.track(source=video_source, tracker="botsort.yaml", show=True, save=True)
+\end{lstlisting}
+
+\section{Experimentation: Configuration Parameters}
+To investigate the effect of different tracking hyperparameters, custom YAML configuration files were created and modified. Key parameters analyzed include:
+\begin{itemize}
+    \item \texttt{track\_high\_thresh}: The confidence threshold for the first association.
+    \item \texttt{track\_low\_thresh}: The confidence threshold for the second association (ByteTrack specific).
+    \item \texttt{match\_thresh}: Threshold for matching detections to existing tracks.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Customizing Tracker Configuration (YAML)]
+# custom_tracker.yaml
+tracker_type: bytetrack
+track_high_thresh: 0.6  # Adjusted from default 0.5
+track_low_thresh: 0.1
+new_track_thresh: 0.7
+track_buffer: 30        # Frames to keep lost tracks
+match_thresh: 0.8
+\end{lstlisting}
+
+\subsection{Observations on Parameter Changes}
+By adjusting the \texttt{track\_buffer} and \texttt{match\_thresh}, significant differences in tracking stability were observed. For instance, increasing the track buffer allowed the tracker to recover object IDs after brief occlusions, reducing the number of ID switches. 
+%(Include specific observations from your experiments here).
+
+\section{Results and Visualizations}
+The tracking algorithms were applied to video sequences containing the target objects. The outputs demonstrate bounding boxes overlaid with unique integer IDs that persist across frames.
+
+% Uncomment and replace with your actual processed frames
+% \begin{figure}[htpb]
+%     \centering
+%     \begin{minipage}{0.48\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth]{bytetrack_frame.png}
+%         \caption{Tracking with ByteTrack.}
+%     \end{minipage}\hfill
+%     \begin{minipage}{0.48\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth]{botsort_frame.png}
+%         \caption{Tracking with BoT-SORT.}
+%     \end{minipage}
+% \end{figure}
+
+The comparison between BoT-SORT and ByteTrack revealed that... (Add your specific findings regarding frame rate performance, ID switching, and robustness against occlusion here).
+
+\section{Conclusion}
+In this laboratory work, the custom object detector trained in Lab 3 was successfully extended to perform Multiple Object Tracking (MOT). By utilizing the Ultralytics YOLO framework, both BoT-SORT and ByteTrack algorithms were applied to real-world video sequences. The investigation into the tracking configuration parameters highlighted the importance of fine-tuning thresholds and buffers to minimize ID switches and improve trajectory continuity. 
+
+% ==============================================
+%                 REFERENCES
+% ==============================================
+\vspace{1cm}
+\begin{thebibliography}{9}
+    \bibitem{ultralytics_track} 
+    Ultralytics. (2024). \textit{Multi-Object Tracking with Ultralytics YOLO}. Retrieved from \url{https://docs.ultralytics.com/modes/track/}
+\end{thebibliography}
+
+\end{document}

@@ -15,7 +15,9 @@ This repository contains the laboratory assignments, source code, and report tem
 ```text
 📦 ML-Neural-Networks-Course
  ┣ 📂 Lab_01_PyTorch_Classification  # Image classification with CNNs (MNIST, CIFAR, etc.)
- ┣ 📂 Lab_02_...                     # Upcoming labs
+ ┣ 📂 Lab_02_Pretrained_Networks     # Transfer learning and fine-tuning with pre-trained models
+ ┣ 📂 Lab_03_Object_Detection        # Training YOLO models for object detection (Roboflow datasets)
+ ┣ 📂 Lab_04_...                     # Upcoming labs
  ┣ 📂 Templates                      # LaTeX templates for lab reports
  ┣ 📜 .gitignore
  ┣ 📜 requirements.txt
@@ -85,6 +87,7 @@ pip install -r requirements.txt
 ```text
 torch
 torchvision
+ultralytics
 matplotlib
 numpy
 jupyter
@@ -94,7 +97,7 @@ jupyter
 
 ### 📝 Submission Guidelines
 For each laboratory work, students must:
-1. Create a dedicated folder for the lab (e.g., `Lab_01`).
+1. Create a dedicated folder for the lab (e.g., `Lab_01_PyTorch_Classification`, `Lab_03_Object_Detection`).
 2. Include all well-commented source code (`.py` files or Jupyter Notebooks).
 3. Include a compiled PDF report generated using the provided LaTeX template from the `Templates` directory.
 4. Push the code to this repository before the deadline.

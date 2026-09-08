@@ -49,6 +49,17 @@ This repository contains the laboratory assignments, source code, and report tem
 
 ---
 
+### 🔬 Laboratory Work No. 3: Training Object Detectors
+**Objective:** Perform the training of a neural network detector for solving the task of detecting specified objects using the YOLO architecture.
+
+#### Tasks:
+1. **Data Preparation:** Explore the assigned dataset from Roboflow (e.g., People, License Plates, Vehicles, Cats, Water Meters, Rock-Paper-Scissors) and perform any necessary data transformations to organize the training process.
+2. **Model Training:** Organize the training process for the assigned YOLO architecture variant (YOLO11, YOLO12, YOLO26) using the `ultralytics` framework.
+3. **Evaluation:** Evaluate the training efficiency on the test set using the mean Average Precision (mAP) metric.
+4. **Inference Visualization:** Implement a script to visualize the detector's operation by detecting objects and rendering bounding boxes on arbitrary photographs retrieved from the Internet.
+
+---
+
 ### ⚙️ Installation & Setup
 
 It is highly recommended to use a virtual environment (e.g., `venv` or `conda`) to manage dependencies.

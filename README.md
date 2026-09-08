@@ -1,14 +1,14 @@
 # Image Processing in Intelligent Systems
 ## Laboratory Works Repository
 
-**Institution:** Brest State Technical University (BSTU)  
-**Department:** Intelligent Information Systems (IIT)  
+**Institution:** Brest State Technical University (BrSTU)  
+**Department:** Intellectual Information Technologies (IIT)  
 **Instructor:** Assoc. Prof. A. Kroshchanka, Ph.D.
 
 ---
 
 ### 📖 Course Overview
-This repository contains the laboratory assignments, source code, and report templates for the beginner course on Machine Learning and Neural Networks. The practical sessions focus on constructing, training, and evaluating neural network models using modern deep learning frameworks (primarily PyTorch) for various computer vision and data analysis tasks.
+This repository contains the laboratory assignments, source code, and report templates for the course on Image Processing in Intelligent Systems. The practical sessions focus on constructing, training, and evaluating neural network models using modern deep learning frameworks (primarily PyTorch) for various computer vision and data analysis tasks.
 
 ### 🗂️ Repository Structure
 
@@ -17,7 +17,8 @@ This repository contains the laboratory assignments, source code, and report tem
  ┣ 📂 Lab_01_PyTorch_Classification  # Image classification with CNNs (MNIST, CIFAR, etc.)
  ┣ 📂 Lab_02_Pretrained_Networks     # Transfer learning and fine-tuning with pre-trained models
  ┣ 📂 Lab_03_Object_Detection        # Training YOLO models for object detection (Roboflow datasets)
- ┣ 📂 Lab_04_...                     # Upcoming labs
+ ┣ 📂 Lab_04_Object_Tracking         # Multiple Object Tracking using BoT-SORT and ByteTrack
+ ┣ 📂 Lab_05_...                     # Upcoming labs
  ┣ 📂 Templates                      # LaTeX templates for lab reports
  ┣ 📜 .gitignore
  ┣ 📜 requirements.txt
@@ -34,8 +35,6 @@ This repository contains the laboratory assignments, source code, and report tem
 2. **Training & Evaluation:** Train the model using the assigned dataset and optimizer (SGD, Adam, Adadelta, RMSprop). Use `CrossEntropyLoss`. Plot the training/validation loss curves using `matplotlib`.
 3. **SOTA Comparison:** Compare your results with state-of-the-art architectures found in the literature.
 4. **Visualization:** Implement an inference script that takes a random image from the test set and outputs the model's predicted class.
-
-*Note: Check the `Lab_01_PyTorch_Classification` folder for your specific dataset and optimizer variant.*
 
 ---
 
@@ -62,14 +61,25 @@ This repository contains the laboratory assignments, source code, and report tem
 
 ---
 
+### 🔬 Laboratory Work No. 4: Multiple Object Tracking
+**Objective:** Investigate the application of tracking algorithms based on a trained object detector network.
+
+#### Tasks:
+1. **Tracking Implementation:** Implement logic for tracking multiple objects using the Ultralytics YOLO library, utilizing the custom object detector trained in Laboratory Work 3.
+2. **Algorithm Application:** Apply and compare the **BoT-SORT** and **ByteTrack** tracking algorithms using their respective configuration files.
+3. **Parameter Investigation:** Modify parameters within the tracking configuration YAML files (e.g., confidence thresholds, matching thresholds) and investigate their impact on tracking quality and identifier (ID) consistency.
+4. **Real-world Testing:** Run the tracking algorithms on video materials sourced from the Internet (e.g., YouTube) containing multiple instances of the target classes.
+
+---
+
 ### ⚙️ Installation & Setup
 
 It is highly recommended to use a virtual environment (e.g., `venv` or `conda`) to manage dependencies.
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/kroschenko/IPIS-2026.git
-cd IPIS-2026
+git clone https://github.com/your-username/ML-Neural-Networks-Course.git
+cd ML-Neural-Networks-Course
 ```
 
 **2. Create a virtual environment:**
@@ -97,7 +107,7 @@ jupyter
 
 ### 📝 Submission Guidelines
 For each laboratory work, students must:
-1. Create a dedicated folder for the lab (e.g., `Lab_01_PyTorch_Classification`, `Lab_03_Object_Detection`).
+1. Create a dedicated folder for the lab (e.g., `Lab_01_PyTorch_Classification`, `Lab_04_Object_Tracking`).
 2. Include all well-commented source code (`.py` files or Jupyter Notebooks).
 3. Include a compiled PDF report generated using the provided LaTeX template from the `Templates` directory.
 4. Push the code to this repository before the deadline.
